@@ -1,4 +1,5 @@
-﻿using Betsson.OnlineWallets.Tests.Helpers;
+﻿using Betsson.OnlineWallets.ApiTestsE2E.Endpoints;
+using Betsson.OnlineWallets.Tests.Helpers;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -8,21 +9,16 @@ using System.Threading.Tasks;
 
 namespace Betsson.OnlineWallets.Tests.Endpoints
 {
-    public class WithdrawEndpoint
+    public class WithdrawEndpoint : BaseEndpoint
     {
-        private readonly RestClient _client;
+        private const string WithdrawEndpointUrl = "/onlinewallet/withdraw";
 
-        public WithdrawEndpoint()
-        {
-            _client = ApiClient.GetClient();
-        }
-
-        // Método para hacer un retiro
+        // Method to withdraw money
         public async Task WithdrawAsync(decimal amount)
         {
-            var request = new RestRequest("/onlinewallet/withdraw", Method.Post);
+            var request = new RestRequest(WithdrawEndpointUrl, Method.Post);
             request.AddJsonBody(new { amount });
-            await _client.PostAsync(request);
+            await _client.ExecuteAsync(request);
         }
     }
 }

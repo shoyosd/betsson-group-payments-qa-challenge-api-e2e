@@ -3,24 +3,27 @@ using RestSharp;
 using System.Threading.Tasks;
 using Betsson.OnlineWallets.Tests.Models;
 using Betsson.OnlineWallets.Tests.Endpoints;
+using Betsson.OnlineWallets.ApiTestsE2E.Endpoints;
 
 namespace Betsson.OnlineWallets.Tests.Endpoints
 {
-    public class BalanceEndpoint
+    public class BalanceEndpoint : BaseEndpoint
     {
-        private readonly RestClient _client;
+        private const string BalanceEndpointUrl = "/onlinewallet/balance";
 
-        public BalanceEndpoint()
+        // Method to get the balance
+        public async Task<RestResponse<BalanceResponse>> GetBalanceAsync()
         {
-            _client = ApiClient.GetClient();
+            var request = new RestRequest(BalanceEndpointUrl, Method.Get);
+            var response = await _client.ExecuteAsync<BalanceResponse>(request);
+            return response;
         }
 
-        // Método para obtener el balance
-        public async Task<BalanceResponse> GetBalanceAsync()
+        // Method to get only the balance amount
+        public async Task<decimal> GetBalanceAmountAsync()
         {
-            var request = new RestRequest("/onlinewallet/balance", Method.Get);
-            var response = await _client.GetAsync<BalanceResponse>(request);
-            return response;
+            var response = await GetBalanceAsync();
+            return response.Data.Amount;
         }
     }
 }
