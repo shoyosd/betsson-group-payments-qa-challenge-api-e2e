@@ -4,17 +4,17 @@ using System.Threading.Tasks;
 using Betsson.OnlineWallets.Tests.Models;
 using Betsson.OnlineWallets.Tests.Endpoints;
 using Betsson.OnlineWallets.ApiTestsE2E.Endpoints;
+using Betsson.OnlineWallets.ApiTestsE2E.TestData;
 
 namespace Betsson.OnlineWallets.Tests.Endpoints
 {
     public class BalanceEndpoint : BaseEndpoint
     {
-        private const string BalanceEndpointUrl = "/onlinewallet/balance";
-
+   
         // Method to get the balance
         public async Task<RestResponse<BalanceResponse>> GetBalanceAsync()
         {
-            var request = new RestRequest(BalanceEndpointUrl, Method.Get);
+            var request = new RestRequest(ApiTestData.BalanceEndpointUrl, Method.Get);
             var response = await _client.ExecuteAsync<BalanceResponse>(request);
             return response;
         }
@@ -25,5 +25,6 @@ namespace Betsson.OnlineWallets.Tests.Endpoints
             var response = await GetBalanceAsync();
             return response.Data.Amount;
         }
+        
     }
 }
