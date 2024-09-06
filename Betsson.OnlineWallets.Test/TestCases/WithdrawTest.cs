@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System.Threading.Tasks;
 using Betsson.OnlineWallets.Tests.Endpoints;
+using Betsson.OnlineWallets.Tests.Helpers;
 
 namespace Betsson.OnlineWallets.Tests.TestCases
 {
@@ -16,6 +17,7 @@ namespace Betsson.OnlineWallets.Tests.TestCases
         private const decimal ValidWithdrawAmount = 50m;
         private const decimal ExcessiveWithdrawAmount = 150m;
         private const decimal NegativeWithdrawAmount = -50m;
+
         private decimal _initialBalance;
 
         [SetUp]
@@ -35,60 +37,31 @@ namespace Betsson.OnlineWallets.Tests.TestCases
         [Test]
         public async Task ValidWithdraw_ShouldReturn200OkAndUpdateBalance()
         {
-            // Perform a valid withdrawal
             await _withdrawEndpoint.WithdrawAsync(ValidWithdrawAmount);
-
-            // Get the new balance
-            var newBalance = await _balanceEndpoint.GetBalanceAmountAsync();
-
-            // Verify that the balance has decreased correctly
-            var expectedBalance = _initialBalance - ValidWithdrawAmount;
-            Assert.That(newBalance, Is.EqualTo(expectedBalance), $"The balance should be {expectedBalance} after the withdrawal, but it is {newBalance}.");
+            await WalletTestHelper.ValidateBalanceAfterOperation(_balanceEndpoint, _initialBalance, -ValidWithdrawAmount, "The balance should be updated correctly after a valid withdrawal.");
         }
 
         [Test]
         public async Task WithdrawMoreThanAvailable_ShouldReturnErrorAndNotUpdateBalance()
         {
-            // Attempt to withdraw more than the current balance
             var response = await _withdrawEndpoint.WithdrawAsync(ExcessiveWithdrawAmount);
-
-            // Verify that the server returned a 400 Bad Request or similar error
             Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest), "The server should return a 400 Bad Request for an excessive withdrawal.");
-
-            // Get the new balance
-            var newBalance = await _balanceEndpoint.GetBalanceAmountAsync();
-
-            // Verify that the balance has not changed
-            Assert.That(newBalance, Is.EqualTo(_initialBalance), $"The balance should remain {_initialBalance} after a failed withdrawal attempt, but it is {newBalance}.");
+            await WalletTestHelper.ValidateBalanceAfterOperation(_balanceEndpoint, _initialBalance, 0, "The balance should remain unchanged after an attempt to withdraw more than available.");
         }
 
         [Test]
         public async Task WithdrawNegativeAmount_ShouldReturnErrorAndNotUpdateBalance()
         {
-            // Attempt to perform a negative withdrawal
             var response = await _withdrawEndpoint.WithdrawAsync(NegativeWithdrawAmount);
-
-            // Verify that the server returned a 400 Bad Request or similar error
             Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest), "The server should return a 400 Bad Request for a negative withdrawal.");
-
-            // Get the new balance
-            var newBalance = await _balanceEndpoint.GetBalanceAmountAsync();
-
-            // Verify that the balance has not changed
-            Assert.That(newBalance, Is.EqualTo(_initialBalance), $"The balance should remain {_initialBalance} after a failed withdrawal attempt, but it is {newBalance}.");
+            await WalletTestHelper.ValidateBalanceAfterOperation(_balanceEndpoint, _initialBalance, 0, "The balance should remain unchanged after an attempt to withdraw a negative amount.");
         }
 
         [Test]
         public async Task WithdrawFullBalance_ShouldReturn200OkAndSetBalanceToZero()
         {
-            // Perform a withdrawal of the full balance
             await _withdrawEndpoint.WithdrawAsync(_initialBalance);
-
-            // Get the new balance
-            var newBalance = await _balanceEndpoint.GetBalanceAmountAsync();
-
-            // Verify that the balance is 0 after the full withdrawal
-            Assert.That(newBalance, Is.EqualTo(0), $"The balance should be 0 after withdrawing the full amount, but it is {newBalance}.");
+            await WalletTestHelper.ValidateBalanceAfterOperation(_balanceEndpoint, _initialBalance, -_initialBalance, "The balance should be 0 after withdrawing the full amount.");
         }
     }
 }
