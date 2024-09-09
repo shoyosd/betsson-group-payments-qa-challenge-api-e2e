@@ -31,17 +31,14 @@ http://localhost:<port>/swagger/index.html
 
 ```
 Betsson.OnlineWallets/
-?
-??? Betsson.OnlineWallets.ApiTestsE2E/
-?   ??? Helpers/                  # Auxiliary methods for testing
-?   ??? TestData/                 # Test and configuration data
-?   ??? TestCases/                # Specific test cases for the API
-?
-??? Betsson.OnlineWallets.UnitTests/  
-    ??? Data/                     # Data layer unit tests
-
-
-
+|
+|-- Betsson.OnlineWallets.ApiTestsE2E/
+  |--   Helpers/                  # Auxiliary methods for testing
+  |--   TestData/                 # Test and configuration data
+  |--   TestCases/                # Specific test cases for the API
+|
+|-- Betsson.OnlineWallets.UnitTests/  
+    |-- Data/                     # Data layer unit tests
 ```
 
 ## Acknowledgements and Introduction
