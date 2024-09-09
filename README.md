@@ -22,6 +22,11 @@ docker run -p <port>:8080 <image id>
 http://localhost:<port>/swagger/index.html
 ```
 
+## Tests results:
+
+  ![Test Results](testresults.png)
+
+
 ## Folder structure for tests.
 
 ```
